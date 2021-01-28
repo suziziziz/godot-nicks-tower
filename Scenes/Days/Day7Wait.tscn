@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var time := 0.0
+var time_max := 2.0
+
+func _process(delta):
+	if time >= time_max:
+		get_tree().change_scene(\"res://Scenes/Days/Day1-Repeat.tscn\")
+	time += delta
+	pass
+"
+
+[node name="Day7Wait" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )

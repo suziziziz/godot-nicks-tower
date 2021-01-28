@@ -1,0 +1,307 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://Objects/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Models/SceneBricks1.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Models/SceneBricks2.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Objects/Bed.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Objects/BrickPosComplete2.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Objects/Brick.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Sounds/Narracoes/Dia2-3.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/Narracoes/Dia2-4.wav" type="AudioStream" id=8]
+[ext_resource path="res://EnvNight.tres" type="Environment" id=9]
+[ext_resource path="res://Sounds/Narracoes/Dia2-5.wav" type="AudioStream" id=10]
+[ext_resource path="res://Objects/Radio.tscn" type="PackedScene" id=11]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+albedo_color = Color( 0, 0, 0.243137, 1 )
+
+[sub_resource type="CubeMesh" id=2]
+material = SubResource( 1 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 2, 2, 2 )
+
+[sub_resource type="CylinderShape" id=4]
+radius = 3.75
+height = 12.0
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(NodePath) var narracao2
+
+func _process(delta):
+	stream_paused = get_node(player).paused
+	if stream_paused:
+		return
+#	if get_node(player).bricks <= 0:
+#		get_node(player).can_pick_items = false
+	if !inited:
+		if start:
+			play(0.0)
+			inited = true
+			get_node(player).can_pick_items = false
+	elif !playing:
+		get_node(player).can_pick_items = true
+		get_node(narracao2).to_play = true
+		queue_free()
+	
+	pass
+"
+
+[sub_resource type="Animation" id=6]
+resource_name = "Play"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:start")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(NodePath) var narracao3
+export(bool) var to_play := false
+
+func _process(delta):
+	if get_node(player).bricks < get_node(player).initial_bricks:
+		start = true
+	else:
+		return
+	
+	if to_play:
+		stream_paused = get_node(player).paused
+		if stream_paused:
+			return
+		if !inited:
+			if start:
+				play(0.0)
+				inited = true
+				get_node(player).can_pick_items = true
+		elif !playing:
+			get_node(player).can_pick_items = true
+			get_node(narracao3).to_play = true
+			queue_free()
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(bool) var to_play := false
+
+func _process(delta):
+	if get_node(player).bricks <= 0:
+		start = true
+	else:
+		return
+	
+	if to_play:
+		stream_paused = get_node(player).paused
+		if stream_paused:
+			return
+		if !inited:
+			if start:
+				play(0.0)
+				inited = true
+				get_node(player).can_pick_items = false
+		elif !playing:
+			get_node(player).can_pick_items = true
+			queue_free()
+	
+	pass
+"
+
+[node name="Day2" type="Spatial"]
+
+[node name="Env" type="Spatial" parent="."]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Floor" type="StaticBody" parent="Env"]
+transform = Transform( 50, 0, 0, 0, 1, 0, 0, 0, 50, 0, -1, 0 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor2" type="StaticBody" parent="Env"]
+transform = Transform( 50, 0, 0, 0, -4.37114e-08, 50, 0, -1, -2.18557e-06, 0, 48, 51 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor2"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor2"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor3" type="StaticBody" parent="Env"]
+transform = Transform( 50, 0, 0, 0, -4.37114e-08, 50, 0, -1, -2.18557e-06, 0, 48, -51 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor3"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor3"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor4" type="StaticBody" parent="Env"]
+transform = Transform( -2.18557e-06, -1, -2.18557e-06, 0, -4.37114e-08, 50, -50, 4.37114e-08, 9.55343e-14, 51, 48, -2.22928e-06 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor4"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor4"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor5" type="StaticBody" parent="Env"]
+transform = Transform( -2.18557e-06, -1, -2.18557e-06, 0, -4.37114e-08, 50, -50, 4.37114e-08, 9.55343e-14, -51, 48, 2.22928e-06 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor5"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor5"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="SceneBricks" type="Spatial" parent="."]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody" type="StaticBody" parent="SceneBricks"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape" parent="SceneBricks/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0 )
+shape = SubResource( 4 )
+
+[node name="SceneBricks1" parent="SceneBricks" instance=ExtResource( 2 )]
+
+[node name="SceneBricks2" parent="SceneBricks" instance=ExtResource( 3 )]
+
+[node name="SceneBricks3" parent="SceneBricks" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="BrickPos" parent="SceneBricks" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11, 2, 0 )
+current_day = "Dia 2 - Noite"
+next_scene = "res://Scenes/Days/Day3.tscn"
+radio = NodePath("../Radio")
+
+[node name="Bed" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 13, 0 )
+light_color = Color( 0, 0, 0.498039, 1 )
+
+[node name="Bricks" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Brick" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 1.5, 0, -6 )
+
+[node name="Brick2" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -7.5, 0, -13 )
+
+[node name="Brick3" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -13.5, 0, 14 )
+
+[node name="Brick4" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 1.5, 0, 19 )
+
+[node name="Brick5" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -23.5, 0, 4 )
+
+[node name="Brick6" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, -15.5, 0, -25 )
+
+[node name="Brick7" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, 5.5, 0, -20 )
+
+[node name="Brick8" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, 18.2, 0, 0 )
+
+[node name="Narracao1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+script = SubResource( 5 )
+start = true
+player = NodePath("../Player")
+narracao2 = NodePath("../Narracao2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Narracao1"]
+autoplay = "Play"
+anims/Play = SubResource( 6 )
+
+[node name="Narracao2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+script = SubResource( 7 )
+player = NodePath("../Player")
+narracao3 = NodePath("../Narracao3")
+
+[node name="Narracao3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+script = SubResource( 8 )
+player = NodePath("../Player")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 9 )
+
+[node name="Radio" parent="." instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, -5 )
+player = NodePath("../Player")

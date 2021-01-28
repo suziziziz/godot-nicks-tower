@@ -1,0 +1,99 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Sounds/SFX/SFX-TijolosCaindo.wav" type="AudioStream" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends AudioStreamPlayer2D
+
+export(bool) var start := false
+var init := false
+export(bool) var to_scene := false
+export(String) var next_scene := \"res://Scenes/Menu.tscn\"
+
+func _ready():
+	load(next_scene)
+	pass
+
+func _process(delta):
+	if !init:
+		if start:
+			play(0.0)
+			init = true
+	else:
+		if !playing:
+			$\"../AnimationPlayer\".play(\"ToScene\")
+			if to_scene:
+				get_tree().change_scene(next_scene)
+	pass
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "TijolosCaindo"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("AudioStreamPlayer:start")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("AudioStreamPlayer:to_scene")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "ToScene"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("AudioStreamPlayer:to_scene")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[node name="Day2-Dark" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_horizontal_guides_": [ 300.0 ],
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
+position = Vector2( 320, 300 )
+stream = ExtResource( 1 )
+script = SubResource( 1 )
+next_scene = "res://Scenes/Days/Day2-Night.tscn"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "TijolosCaindo"
+anims/TijolosCaindo = SubResource( 2 )
+anims/ToScene = SubResource( 3 )

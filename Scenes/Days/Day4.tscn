@@ -1,0 +1,554 @@
+[gd_scene load_steps=32 format=2]
+
+[ext_resource path="res://Objects/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Models/SceneBricks1.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Models/SceneBricks2.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Objects/Bed.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Objects/BrickPosComplete2.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Objects/Brick.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Sounds/Narracoes/Dia4-1.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/Narracoes/Dia4-3.wav" type="AudioStream" id=8]
+[ext_resource path="res://Objects/Radio.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Objects/EstanteDeLivros.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Sounds/Narracoes/Dia4-2.wav" type="AudioStream" id=11]
+[ext_resource path="res://Scripts/SaveDay.gd" type="Script" id=12]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+
+[sub_resource type="CubeMesh" id=2]
+material = SubResource( 1 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 2, 2, 2 )
+
+[sub_resource type="CylinderShape" id=4]
+radius = 3.75
+height = 20.0
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(NodePath) var narracao2
+
+func _process(delta):
+	stream_paused = get_node(player).paused
+	if stream_paused:
+		return
+	if get_node(player).bricks <= 0:
+		get_node(player).can_pick_items = false
+	if !inited:
+		if start:
+			play(0.0)
+			inited = true
+			get_node(player).can_jump = false
+			get_node(player).can_pick_items = false
+	elif !playing:
+		get_node(player).can_jump = true
+		get_node(player).can_pick_items = true
+		get_node(narracao2).to_play = true
+		get_node(player).hint_jump.visible = true
+		queue_free()
+	
+	pass
+"
+
+[sub_resource type="Animation" id=6]
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:start")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(bool) var to_play := false
+export(NodePath) var narracao_putz
+
+func _process(delta):
+	if get_node(player).bricks <= 0:
+		start = true
+	else:
+		return
+	
+	if get_node(player).bricks <= 0:
+		get_node(player).can_pick_items = false
+	if to_play:
+		stream_paused = get_node(player).paused
+		if stream_paused:
+			return
+		if !inited:
+			if start:
+				play(0.0)
+				inited = true
+				get_node(player).can_pick_items = false
+				if narracao_putz != \".\":
+					get_node(narracao_putz).queue_free()
+		elif !playing:
+			get_node(player).can_pick_items = true
+			queue_free()
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends AudioStreamPlayer
+
+export var start := false
+var inited := false
+export(NodePath) var player
+export(bool) var to_play := false
+export(NodePath) var narracao2
+
+func _process(delta):
+	if !start && get_node(player).y_velocity < -24:
+		start = true
+	elif !start:
+		return
+	
+#	if get_node(player).bricks <= 0:
+#		get_node(player).can_pick_items = false
+	if to_play:
+		stream_paused = get_node(player).paused
+		if stream_paused:
+			return
+		if !inited:
+			if start:
+				play(0.0)
+				inited = true
+				get_node(player).can_pick_items = false
+		elif !playing:
+			get_node(player).can_pick_items = true
+			get_node(narracao2).narracao_putz = \".\"
+			queue_free()
+	
+	pass
+"
+
+[sub_resource type="BoxShape" id=9]
+extents = Vector3( 3.3, 1, 1 )
+
+[sub_resource type="SpatialMaterial" id=10]
+flags_unshaded = true
+
+[sub_resource type="CubeMesh" id=11]
+material = SubResource( 10 )
+
+[sub_resource type="SpatialMaterial" id=12]
+flags_unshaded = true
+albedo_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="ArrayMesh" id=13]
+surfaces/0 = {
+"aabb": AABB( -1.02887, -1.02887, -1.02887, 2.05773, 2.05774, 2.05774 ),
+"array_data": PoolByteArray( 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 0, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 0, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 0, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 60, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 60, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 60, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 60, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 60, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 60 ),
+"array_index_data": PoolByteArray( 0, 0, 4, 0, 2, 0, 2, 0, 4, 0, 6, 0, 1, 0, 5, 0, 3, 0, 3, 0, 5, 0, 7, 0, 8, 0, 12, 0, 10, 0, 10, 0, 12, 0, 14, 0, 9, 0, 13, 0, 11, 0, 11, 0, 13, 0, 15, 0, 16, 0, 20, 0, 18, 0, 18, 0, 20, 0, 22, 0, 17, 0, 21, 0, 19, 0, 19, 0, 21, 0, 23, 0 ),
+"blend_shape_data": [  ],
+"format": 97559,
+"index_count": 36,
+"material": SubResource( 12 ),
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 24
+}
+
+[sub_resource type="BoxShape" id=14]
+
+[sub_resource type="SpatialMaterial" id=15]
+flags_unshaded = true
+
+[sub_resource type="CubeMesh" id=16]
+material = SubResource( 15 )
+
+[sub_resource type="SpatialMaterial" id=17]
+flags_unshaded = true
+albedo_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="ArrayMesh" id=18]
+surfaces/0 = {
+"aabb": AABB( -1.02887, -1.02887, -1.02887, 2.05773, 2.05774, 2.05774 ),
+"array_data": PoolByteArray( 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 0, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 0, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 0, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 0, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 60, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 60, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 56, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 56, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 56, 238, 177, 131, 63, 238, 177, 131, 63, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 60, 238, 177, 131, 191, 238, 177, 131, 191, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 60, 238, 177, 131, 191, 238, 177, 131, 63, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 60, 238, 177, 131, 63, 238, 177, 131, 191, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 60 ),
+"array_index_data": PoolByteArray( 0, 0, 4, 0, 2, 0, 2, 0, 4, 0, 6, 0, 1, 0, 5, 0, 3, 0, 3, 0, 5, 0, 7, 0, 8, 0, 12, 0, 10, 0, 10, 0, 12, 0, 14, 0, 9, 0, 13, 0, 11, 0, 11, 0, 13, 0, 15, 0, 16, 0, 20, 0, 18, 0, 18, 0, 20, 0, 22, 0, 17, 0, 21, 0, 19, 0, 19, 0, 21, 0, 23, 0 ),
+"blend_shape_data": [  ],
+"format": 97559,
+"index_count": 36,
+"material": SubResource( 17 ),
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 24
+}
+
+[sub_resource type="BoxShape" id=19]
+
+[node name="Day4" type="Spatial"]
+script = ExtResource( 12 )
+day = 4
+
+[node name="Env" type="Spatial" parent="."]
+
+[node name="Floor" type="StaticBody" parent="Env" groups=[
+"Ground",
+]]
+transform = Transform( 50, 0, 0, 0, 1, 0, 0, 0, 50, 0, -1, 0 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor2" type="StaticBody" parent="Env"]
+transform = Transform( 50, 0, 0, 0, -4.37114e-08, 50, 0, -1, -2.18557e-06, 0, 48, 51 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor2"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor2"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor3" type="StaticBody" parent="Env"]
+transform = Transform( 50, 0, 0, 0, -4.37114e-08, 50, 0, -1, -2.18557e-06, 0, 48, -51 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor3"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor3"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor4" type="StaticBody" parent="Env"]
+transform = Transform( -2.18557e-06, -1, -2.18557e-06, 0, -4.37114e-08, 50, -50, 4.37114e-08, 9.55343e-14, 51, 48, -2.22928e-06 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor4"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor4"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="Floor5" type="StaticBody" parent="Env"]
+transform = Transform( -2.18557e-06, -1, -2.18557e-06, 0, -4.37114e-08, 50, -50, 4.37114e-08, 9.55343e-14, -51, 48, 2.22928e-06 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Env/Floor5"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Env/Floor5"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="SceneBricks" type="Spatial" parent="."]
+
+[node name="StaticBody" type="StaticBody" parent="SceneBricks"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape" parent="SceneBricks/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0 )
+shape = SubResource( 4 )
+
+[node name="SceneBricks1" parent="SceneBricks" instance=ExtResource( 2 )]
+
+[node name="SceneBricks2" parent="SceneBricks" instance=ExtResource( 3 )]
+
+[node name="SceneBricks3" parent="SceneBricks" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="SceneBricks4" parent="SceneBricks" instance=ExtResource( 3 )]
+transform = Transform( 0.927184, 0, 0.374607, 0, 1, 0, -0.374607, 0, 0.927184, 0, 1.5, 0 )
+
+[node name="SceneBricks5" parent="SceneBricks" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+
+[node name="BrickPos" parent="SceneBricks" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( -1.62921e-07, 0, 1, 0, 1, 0, -1, 0, -1.62921e-07, 11, 2, 0 )
+current_day = "Dia 4"
+next_scene = "res://Scenes/Days/Day4Night.tscn"
+radio = NodePath("../Radio")
+
+[node name="Bed" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 13, 0 )
+
+[node name="Bricks" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 12.2, 10 )
+
+[node name="Brick" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.8, 0, -0.5 )
+
+[node name="Brick2" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.8, 0, 0.5 )
+
+[node name="Brick3" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.8, 0, -0.5 )
+
+[node name="Brick4" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.8, 0, 0.5 )
+
+[node name="Brick5" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.2, 0, -0.5 )
+
+[node name="Brick6" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.2, 0, 0.5 )
+
+[node name="Brick7" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 0, 0 )
+
+[node name="Brick8" parent="Bricks" instance=ExtResource( 6 )]
+transform = Transform( 7.54979e-08, 1, -4.37114e-08, 0, -4.37114e-08, -1, -1, 7.54979e-08, -3.30012e-15, -2.2, -8.6, -0.1 )
+
+[node name="Narracao1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+script = SubResource( 5 )
+player = NodePath("../Player")
+narracao2 = NodePath("../Narracao2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Narracao1"]
+autoplay = "Play"
+anims/Play = SubResource( 6 )
+
+[node name="Narracao2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+script = SubResource( 7 )
+player = NodePath("../../Day4/Player")
+narracao_putz = NodePath("../NarracaoPutz")
+
+[node name="NarracaoPutz" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+script = SubResource( 8 )
+player = NodePath("../Player")
+to_play = true
+narracao2 = NodePath("../Narracao2")
+
+[node name="StaticBody" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, 0 )
+shape = SubResource( 9 )
+
+[node name="EstanteDeLivros" parent="." instance=ExtResource( 10 )]
+transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 10 )
+collision_layer = 4
+collision_mask = 4
+
+[node name="Platforms" type="Spatial" parent="."]
+
+[node name="Platform" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -9, 1.1, 6 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform"]
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform/MeshInstance"]
+mesh = SubResource( 13 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform"]
+shape = SubResource( 14 )
+
+[node name="Platform2" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -9, 2.1, 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform2"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform2/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform2"]
+shape = SubResource( 19 )
+
+[node name="Platform3" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -1, 3.1, 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform3"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform3/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform3"]
+shape = SubResource( 19 )
+
+[node name="Platform4" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, 4, 4.1, 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform4"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform4/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform4"]
+shape = SubResource( 19 )
+
+[node name="Platform5" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -3, 5.1, 18 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform5"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform5/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform5"]
+shape = SubResource( 19 )
+
+[node name="Platform6" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -11, 6.1, 18 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform6"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform6/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform6"]
+shape = SubResource( 19 )
+
+[node name="Platform7" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -18, 7.1, 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform7"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform7/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform7"]
+shape = SubResource( 19 )
+
+[node name="Platform12" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -18, 8.1, 7 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform12"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform12/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform12"]
+shape = SubResource( 19 )
+
+[node name="Platform9" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -13, 9.1, 5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform9"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform9/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform9"]
+shape = SubResource( 19 )
+
+[node name="Platform10" type="StaticBody" parent="Platforms"]
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 2, -8, 10.1, 9 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform10"]
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="Platforms/Platform10/MeshInstance"]
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Platforms/Platform10"]
+shape = SubResource( 19 )
+
+[node name="Radio" parent="." instance=ExtResource( 9 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, -5 )
+player = NodePath("../Player")

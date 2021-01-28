@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia7-EncontraPassos.wav-2f7340ee6c629f7ef19b35c7c4da7346.sample"
+
+[deps]
+
+source_file="res://Sounds/Narracoes/Dia7-EncontraPassos.wav"
+dest_files=[ "res://.import/Dia7-EncontraPassos.wav-2f7340ee6c629f7ef19b35c7c4da7346.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

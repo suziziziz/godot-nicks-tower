@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia3-2-2.wav-76fdc702a97c28c6af2e85e36d82e265.sample"
+
+[deps]
+
+source_file="res://Sounds/Falas/Dia3-2-2.wav"
+dest_files=[ "res://.import/Dia3-2-2.wav-76fdc702a97c28c6af2e85e36d82e265.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

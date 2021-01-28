@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia6-1.wav-2eaefaf75c3abed5c1bd2ee0f7aa5bf7.sample"
+
+[deps]
+
+source_file="res://Sounds/Narracoes/Dia6-1.wav"
+dest_files=[ "res://.import/Dia6-1.wav-2eaefaf75c3abed5c1bd2ee0f7aa5bf7.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

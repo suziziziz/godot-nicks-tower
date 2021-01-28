@@ -1,0 +1,999 @@
+[gd_scene load_steps=57 format=2]
+
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://Crosshair2.png" type="Texture" id=2]
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Bold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://Images/SliderGrabber.png" type="Texture" id=4]
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://Models/Pica reta/picareta.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Sounds/SFX/SFX-Picareta.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/Falas/Dia3-2-2.wav" type="AudioStream" id=8]
+[ext_resource path="res://Sounds/Falas/Dia3-2-1.wav" type="AudioStream" id=9]
+[ext_resource path="res://Sounds/Narracoes/Dia7-EncontraPicareta.wav" type="AudioStream" id=10]
+
+[sub_resource type="CapsuleMesh" id=1]
+mid_height = 2.0
+
+[sub_resource type="CapsuleShape" id=2]
+height = 2.0
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Spatial
+
+export(bool) var can_attack := false
+export(bool) var attack := false
+export(NodePath) var player
+export(NodePath) var pica_reta_anim
+export(NodePath) var ray_rock
+
+onready var collided := $\".\"
+
+var state_machine
+func _ready():
+	state_machine = get_node(pica_reta_anim).get(\"parameters/playback\")
+	visible = get_node(player).has_pickaxe
+
+	pass
+
+func _process(delta):
+	can_attack = get_node(player).can_attack
+	visible = false
+	if get_node(player).has_pickaxe:
+		if get_node(player).brick_picked == get_node(player):
+			visible = true
+		if get_node(player).pickaxe_life <= 0:
+			visible = false
+	
+	if !visible || !get_node(player).to_play:
+		return
+	if collided == $\".\":
+		if (get_node(ray_rock).is_colliding() && get_node(ray_rock).get_collider().is_in_group(\"Rock\") && can_attack
+		&&  get_node(player).can_pick_items):
+			if attack:
+				$SFX.play(0.0)
+				collided = get_node(ray_rock).get_collider()
+				collided.life -= 1
+				get_node(player).pickaxe_life -= collided.hit_force
+				if get_node(ray_rock).is_colliding() && get_node(ray_rock).get_collider().is_in_group(\"WallBreak\"):
+					get_node(player).has_pickaxe = false
+	else:
+		if !attack:
+			collided = $\".\"
+	
+	if get_node(player).walking:
+		state_machine.travel(\"Walk\")
+		return
+	if Input.is_action_pressed(\"fire\") && can_attack && get_node(player).can_pick_items:
+		state_machine.travel(\"Attack\")
+		return
+	if !get_node(player).walking:
+		state_machine.travel(\"Idle\")
+		return
+	
+	pass
+"
+
+[sub_resource type="Animation" id=4]
+resource_name = "Attack"
+length = 0.8
+loop = true
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Picareta:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15, 0.8 ),
+"transitions": PoolRealArray( 1, -2, -2 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0.464, -0.541, -0.471 ), Vector3( 0, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Picareta:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.15, 0.8 ),
+"transitions": PoolRealArray( 2, -2, -2 ),
+"update": 0,
+"values": [ Vector3( 2.486, 0, 0 ), Vector3( 2.486, 0, -30 ), Vector3( 2.486, 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:attack")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.15, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "Idle"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Picareta:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:attack")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "PickUp"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:attack")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Picareta:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 0.5, 1 ),
+"update": 0,
+"values": [ Vector3( 0, -2.5, 0 ), Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+length = 0.6
+loop = true
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Picareta:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( -2 ),
+"update": 0,
+"values": [ Vector3( 0, -2, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:attack")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "Attack"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "Idle"
+
+[sub_resource type="AnimationNodeAnimation" id=10]
+animation = "PickUp"
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "Walk"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=12]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=13]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=14]
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=15]
+switch_mode = 2
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=16]
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=17]
+switch_mode = 2
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=18]
+switch_mode = 2
+xfade_time = 0.15
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=19]
+switch_mode = 2
+xfade_time = 0.3
+
+[sub_resource type="AnimationNodeStateMachine" id=20]
+states/Attack/node = SubResource( 8 )
+states/Attack/position = Vector2( 449.667, 68 )
+states/Idle/node = SubResource( 9 )
+states/Idle/position = Vector2( 255, 40.3333 )
+states/PickUp/node = SubResource( 10 )
+states/PickUp/position = Vector2( 54.3333, 83.6667 )
+states/Walk/node = SubResource( 11 )
+states/Walk/position = Vector2( 255, 136.333 )
+transitions = [ "Idle", "Walk", SubResource( 12 ), "Walk", "Idle", SubResource( 13 ), "Idle", "Attack", SubResource( 14 ), "Attack", "Idle", SubResource( 15 ), "Walk", "Attack", SubResource( 16 ), "Attack", "Walk", SubResource( 17 ), "PickUp", "Idle", SubResource( 18 ), "PickUp", "Walk", SubResource( 19 ) ]
+start_node = "Idle"
+graph_offset = Vector2( -443, -16 )
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=21]
+
+[sub_resource type="GDScript" id=22]
+script/source = "extends AnimationTree
+
+
+func _ready():
+	active = true
+	
+	pass
+"
+
+[sub_resource type="DynamicFont" id=23]
+use_filter = true
+font_data = ExtResource( 5 )
+
+[sub_resource type="GDScript" id=24]
+script/source = "extends Label
+
+export(NodePath) var player
+
+func _process(delta):
+	if get_node(player).initial_bricks > get_node(player).bricks:
+		visible = false
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=25]
+script/source = "extends Label
+
+export(NodePath) var player
+
+func _process(delta):
+	if Input.is_action_just_pressed(\"jump\") && get_node(player).can_jump:
+		visible = false
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=26]
+script/source = "extends Label
+
+var time = 0
+var time_max = 5
+func _process(delta):
+	if !visible:
+		return
+	if time >= time_max:
+		visible = false
+	time += delta
+	pass
+"
+
+[sub_resource type="GDScript" id=27]
+script/source = "extends Control
+
+export(NodePath) var player_node
+export(NodePath) var sensi_slider
+
+func save( values: Dictionary ):
+	var _f = values
+	_f[\"mouse_sensitivity\"] = get_node(sensi_slider).value
+	
+	return _f
+
+func _on_SaveButton_pressed():
+	var _config = File.new()
+	_config.open(\"res://config.json\", File.READ_WRITE)
+	var _save = save(parse_json(_config.get_as_text()))
+	_config.store_line(to_json(_save))
+	print(parse_json(_config.get_as_text()))
+	_config.close()
+	pass
+
+
+
+
+"
+
+[sub_resource type="DynamicFont" id=28]
+size = 20
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=29]
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="StyleBoxLine" id=30]
+content_margin_top = 0.0
+grow_begin = -1.0
+grow_end = -1.0
+thickness = 4
+
+[sub_resource type="StyleBoxLine" id=31]
+color = Color( 1, 0, 0, 1 )
+grow_begin = -1.0
+grow_end = -1.0
+thickness = 4
+
+[sub_resource type="GDScript" id=32]
+script/source = "extends HSlider
+
+export(NodePath) var pause_node
+export(NodePath) var player_node
+
+func _ready():
+	var _config = File.new()
+	if !_config.file_exists(\"res://config.json\"):
+		return
+	_config.open(\"res://config.json\", File.READ)
+	var _save = parse_json(_config.get_as_text())
+	value = _save[\"mouse_sensitivity\"]
+	_config.close()
+	
+	pass
+
+func _process(delta):
+	editable = get_node(pause_node).visible
+	get_node(player_node).mouse_sensitivity = value
+	
+	pass
+"
+
+[sub_resource type="DynamicFont" id=33]
+use_filter = true
+font_data = ExtResource( 5 )
+
+[sub_resource type="GDScript" id=34]
+script/source = "extends Label
+
+
+export(NodePath) var sensitivity_slider
+
+func _process(delta):
+	text = str(get_node(sensitivity_slider).value)
+	
+	pass
+"
+
+[sub_resource type="StyleBoxFlat" id=35]
+bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=36]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="DynamicFont" id=37]
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="GDScript" id=38]
+script/source = "extends Button
+
+export(NodePath) var pause_node
+
+func _process(delta):
+	disabled = !get_node(pause_node).visible
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=39]
+script/source = "extends Button
+
+export(String) var next_scene
+export(NodePath) var fade_anim
+
+func _ready():
+	#next_scene = load(next_scene)
+	pass
+
+func _pressed():
+	get_node(fade_anim).play(\"FadeInMenu\")
+	
+	pass
+
+
+func _on_Anim_animation_finished(anim_name):
+	if anim_name == \"FadeInMenu\":
+		get_tree().change_scene(next_scene)
+		pass
+	
+	pass
+"
+
+[sub_resource type="DynamicFont" id=40]
+size = 32
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="Animation" id=41]
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Rect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../../..:to_play")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=42]
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Rect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../../..:to_play")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=43]
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Rect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.8, 2 ),
+"transitions": PoolRealArray( 1, -2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../../..:to_play")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("DayLabel:custom_colors/font_color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.8, 2, 4 ),
+"transitions": PoolRealArray( 2, 1, 2, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 0 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 0, 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[sub_resource type="Animation" id=44]
+tracks/0/type = "value"
+tracks/0/path = NodePath("Rect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ) ]
+}
+
+[sub_resource type="GDScript" id=45]
+script/source = "extends AudioStreamPlayer
+
+onready var player = $\"..\"
+
+var played = false
+var sla_play = false
+
+func _process(delta):
+	stream_paused = player.paused
+	if !played:
+		if playing:
+			played = true
+			player.can_pick_items = false
+	else:
+		if !playing && !sla_play:
+			player.can_pick_items = true
+			sla_play = true
+	
+	pass
+"
+
+[sub_resource type="GDScript" id=46]
+script/source = "extends AudioStreamPlayer
+
+onready var ray_brick := $\"../CameraPivot/Camera/RayBrick\"
+onready var player = $\"..\"
+
+var played = false
+var sla_play = false
+
+func _process(delta):
+	stream_paused = player.paused
+	if !player.pickaxe_speak:
+		return
+	if !played:
+		if player.has_pickaxe:
+			play(0.0)
+			player.can_pick_items = false
+			player.can_attack = false
+			played = true
+	else:
+		if !playing:
+			player.can_pick_items = false
+			player.can_attack = true
+			queue_free()
+	pass
+"
+
+[node name="Player" type="KinematicBody" groups=[
+"Player",
+]]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0 )
+collision_layer = 5
+collision_mask = 5
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_vertical_guides_": [ 512.0 ]
+}
+next_scene = "res://Scenes/Menu.tscn"
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+shape = SubResource( 2 )
+
+[node name="CameraPivot" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="Camera" type="Spatial" parent="CameraPivot"]
+
+[node name="Camera" type="Camera" parent="CameraPivot/Camera"]
+far = 125.0
+
+[node name="RayBrick" type="RayCast" parent="CameraPivot/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -6 )
+collision_mask = 3
+
+[node name="RayRock" type="RayCast" parent="CameraPivot/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -6 )
+
+[node name="ItemPos" type="Spatial" parent="CameraPivot/Camera"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, -0.25, -0.5 )
+
+[node name="PicaReta" type="Spatial" parent="CameraPivot/Camera/ItemPos"]
+transform = Transform( -4.07302e-08, 0, 0.25, 0, 0.25, 0, -0.25, 0, -4.07302e-08, 0, -0.5, 0 )
+script = SubResource( 3 )
+player = NodePath("../../../..")
+pica_reta_anim = NodePath("AnimTree")
+ray_rock = NodePath("../../RayRock")
+
+[node name="Picareta" parent="CameraPivot/Camera/ItemPos/PicaReta" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 0.999059, -0.0433753, 0, 0.0433753, 0.999059, 0, 0, 0 )
+
+[node name="SFX" type="AudioStreamPlayer" parent="CameraPivot/Camera/ItemPos/PicaReta"]
+stream = ExtResource( 7 )
+
+[node name="Anim" type="AnimationPlayer" parent="CameraPivot/Camera/ItemPos/PicaReta"]
+autoplay = "Idle"
+anims/Attack = SubResource( 4 )
+anims/Idle = SubResource( 5 )
+anims/PickUp = SubResource( 6 )
+anims/Walk = SubResource( 7 )
+
+[node name="AnimTree" type="AnimationTree" parent="CameraPivot/Camera/ItemPos/PicaReta"]
+tree_root = SubResource( 20 )
+anim_player = NodePath("../Anim")
+parameters/playback = SubResource( 21 )
+script = SubResource( 22 )
+
+[node name="Hints" type="Control" parent="CameraPivot/Camera"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="PickBrick" type="Label" parent="CameraPivot/Camera/Hints"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.86
+anchor_right = 0.5
+anchor_bottom = 0.86
+margin_left = -384.0
+margin_top = -28.0
+margin_right = 384.0
+margin_bottom = 28.0
+custom_fonts/font = SubResource( 23 )
+text = "Olhe para um tijolo e aperte o botão ESQUERDO do MOUSE para pegá-lo,
+e com o mesmo botão, coloque-o na torre."
+align = 1
+valign = 1
+script = SubResource( 24 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+player = NodePath("../../../..")
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/Camera/Hints/PickBrick"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.247059 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Jump" type="Label" parent="CameraPivot/Camera/Hints"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.86
+anchor_right = 0.5
+anchor_bottom = 0.86
+margin_left = -384.0
+margin_top = -28.0
+margin_right = 384.0
+margin_bottom = 28.0
+custom_fonts/font = SubResource( 23 )
+text = "Para pular aperte o botão ESPAÇO no teclado."
+align = 1
+valign = 1
+script = SubResource( 25 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+player = NodePath("../../../..")
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/Camera/Hints/Jump"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.247059 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TacarTijolo" type="Label" parent="CameraPivot/Camera/Hints"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.86
+anchor_right = 0.5
+anchor_bottom = 0.86
+margin_left = -384.0
+margin_top = -28.0
+margin_right = 384.0
+margin_bottom = 28.0
+custom_fonts/font = SubResource( 23 )
+text = "Com o tijolo, Mire para longe e clique o botão
+Esquerdo do Mouse para jogá-lo."
+align = 1
+valign = 1
+script = SubResource( 26 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/Camera/Hints/TacarTijolo"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.247059 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crosshair" type="Control" parent="CameraPivot/Camera"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="C" type="Sprite" parent="CameraPivot/Camera/Crosshair"]
+texture = ExtResource( 2 )
+
+[node name="Pause" type="Control" parent="CameraPivot/Camera"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 27 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+player_node = NodePath("../../..")
+sensi_slider = NodePath("VBoxContainer/Sensitivity")
+
+[node name="C" type="ColorRect" parent="CameraPivot/Camera/Pause"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="Label" parent="CameraPivot/Camera/Pause"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "
+PAUSADO"
+align = 1
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CameraPivot/Camera/Pause"]
+anchor_left = 0.398438
+anchor_right = 0.601562
+anchor_bottom = 1.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Label" type="Label" parent="CameraPivot/Camera/Pause/VBoxContainer"]
+margin_top = 259.0
+margin_right = 207.0
+margin_bottom = 278.0
+custom_fonts/font = SubResource( 29 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Sensibilidade"
+align = 1
+valign = 2
+
+[node name="Sensitivity" type="HSlider" parent="CameraPivot/Camera/Pause/VBoxContainer"]
+margin_top = 282.0
+margin_right = 207.0
+margin_bottom = 294.0
+focus_mode = 0
+mouse_filter = 1
+custom_icons/grabber_highlight = ExtResource( 4 )
+custom_icons/grabber = ExtResource( 4 )
+custom_styles/slider = SubResource( 30 )
+custom_styles/grabber_area = SubResource( 31 )
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.01
+script = SubResource( 32 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+pause_node = NodePath("../..")
+player_node = NodePath("../../../../..")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CameraPivot/Camera/Pause/VBoxContainer/Sensitivity"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Control" type="Control" parent="CameraPivot/Camera/Pause/VBoxContainer/Sensitivity/HBoxContainer"]
+margin_left = 207.0
+margin_right = 207.0
+margin_bottom = 12.0
+
+[node name="Value" type="Label" parent="CameraPivot/Camera/Pause/VBoxContainer/Sensitivity/HBoxContainer/Control"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -9.5
+margin_right = 50.0
+margin_bottom = 9.5
+custom_fonts/font = SubResource( 33 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Value"
+valign = 1
+script = SubResource( 34 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+sensitivity_slider = NodePath("../../..")
+
+[node name="SaveButton" type="Button" parent="CameraPivot/Camera/Pause/VBoxContainer"]
+margin_top = 298.0
+margin_right = 207.0
+margin_bottom = 317.0
+focus_mode = 0
+custom_styles/hover = SubResource( 35 )
+custom_styles/pressed = SubResource( 36 )
+custom_styles/normal = SubResource( 36 )
+custom_fonts/font = SubResource( 37 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "SALVAR CONFIGURAÇÕES"
+script = SubResource( 38 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+pause_node = NodePath("../..")
+
+[node name="MenuButton" type="Button" parent="CameraPivot/Camera/Pause/VBoxContainer"]
+margin_top = 321.0
+margin_right = 207.0
+margin_bottom = 340.0
+focus_mode = 0
+custom_styles/hover = SubResource( 35 )
+custom_styles/pressed = SubResource( 36 )
+custom_styles/normal = SubResource( 36 )
+custom_fonts/font = SubResource( 37 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "SAIR PARA O MENU"
+script = SubResource( 39 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+next_scene = "res://Scenes/Menu.tscn"
+fade_anim = NodePath("../../../Fade/Anim")
+
+[node name="Fade" type="Control" parent="CameraPivot/Camera"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Rect" type="ColorRect" parent="CameraPivot/Camera/Fade"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DayLabel" type="Label" parent="CameraPivot/Camera/Fade"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = SubResource( 40 )
+custom_colors/font_color = Color( 1, 0, 0, 0 )
+text = "DAY"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Anim" type="AnimationPlayer" parent="CameraPivot/Camera/Fade"]
+autoplay = "FadeOut"
+anims/FadeIn = SubResource( 41 )
+anims/FadeInMenu = SubResource( 42 )
+anims/FadeOut = SubResource( 43 )
+anims/Out = SubResource( 44 )
+
+[node name="Balde" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+script = SubResource( 45 )
+
+[node name="Pickaxe" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+script = SubResource( 46 )
+
+[node name="Burro" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+
+[node name="GroundCheck" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0 )
+enabled = true
+[connection signal="pressed" from="CameraPivot/Camera/Pause/VBoxContainer/SaveButton" to="CameraPivot/Camera/Pause" method="_on_SaveButton_pressed"]
+[connection signal="animation_finished" from="CameraPivot/Camera/Fade/Anim" to="." method="_on_Anim_animation_finished"]
+[connection signal="animation_finished" from="CameraPivot/Camera/Fade/Anim" to="CameraPivot/Camera/Pause/VBoxContainer/MenuButton" method="_on_Anim_animation_finished"]

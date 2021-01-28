@@ -1,0 +1,342 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Bold.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends VBoxContainer
+
+export(Array, NodePath) var fases
+
+var iFases = 1
+
+func _ready():
+	var _config = File.new()
+	if !_config.file_exists(\"res://config.json\"):
+		return
+	
+	_config.open(\"res://config.json\", File.READ)
+	var _configs = parse_json(_config.get_as_text())
+	print(_configs)
+	iFases = _configs[\"levels\"]
+	for _i in fases.size():
+		if _i > iFases - 1:
+			get_node(fases[_i]).visible = false
+		else:
+			get_node(fases[_i]).visible = true
+	_config.close()
+	
+	pass
+
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 1 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 1, 1, 1, 1 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0, 0, 0, 0 )
+anti_aliasing = false
+
+[sub_resource type="DynamicFont" id=5]
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Button
+
+export(NodePath) var fade_anim
+export(String) var next_scene
+
+func _ready():
+	load(next_scene)
+	
+	pass
+
+func _pressed():
+	get_node(fade_anim).get_parent().next_scene = next_scene
+	get_node(fade_anim).play(\"FadeIn\")
+	pass
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends Control
+
+export var next_scene := \"res://Scenes/Menu.tscn\"
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == \"FadeIn\":
+		get_tree().change_scene(next_scene)
+	
+	pass
+"
+
+[sub_resource type="Animation" id=8]
+length = 2.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 2, 2 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=9]
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[node name="Fases" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false,
+"_edit_vertical_guides_": [ 512.0 ]
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Fases" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+alignment = 1
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+fases = [ NodePath("FASE1"), NodePath("FASE2"), NodePath("FASE3"), NodePath("FASE4"), NodePath("FASE5"), NodePath("FASE6"), NodePath("FASE7") ]
+
+[node name="FASE1" type="Button" parent="Fases"]
+margin_top = 233.0
+margin_right = 1024.0
+margin_bottom = 252.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "DIA 1"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day1.tscn"
+
+[node name="FASE2" type="Button" parent="Fases"]
+margin_top = 252.0
+margin_right = 1024.0
+margin_bottom = 271.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "DIA 2"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day2.tscn"
+
+[node name="FASE3" type="Button" parent="Fases"]
+margin_top = 271.0
+margin_right = 1024.0
+margin_bottom = 290.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "DIA 3"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day3.tscn"
+
+[node name="FASE4" type="Button" parent="Fases"]
+margin_top = 290.0
+margin_right = 1024.0
+margin_bottom = 309.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "DIA 4"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day4.tscn"
+
+[node name="FASE5" type="Button" parent="Fases"]
+margin_top = 309.0
+margin_right = 1024.0
+margin_bottom = 328.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "DIA 5"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day5.tscn"
+
+[node name="FASE6" type="Button" parent="Fases"]
+margin_top = 328.0
+margin_right = 1024.0
+margin_bottom = 347.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+enabled_focus_mode = 0
+text = "DIA 6"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day6.tscn"
+
+[node name="FASE7" type="Button" parent="Fases"]
+margin_top = 347.0
+margin_right = 1024.0
+margin_bottom = 366.0
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+enabled_focus_mode = 0
+text = "DIA 7"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+fade_anim = NodePath("../../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Days/Day7.tscn"
+
+[node name="Voltar" type="Button" parent="."]
+anchor_top = 0.973333
+anchor_right = 1.00041
+anchor_bottom = 1.00533
+margin_right = -0.416004
+margin_bottom = -0.200001
+focus_mode = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "VOLTAR"
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+fade_anim = NodePath("../Fade/AnimationPlayer")
+next_scene = "res://Scenes/Menu.tscn"
+
+[node name="Fade" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="Fade"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Fade"]
+autoplay = "FadeOut"
+anims/FadeIn = SubResource( 8 )
+anims/FadeOut = SubResource( 9 )
+[connection signal="animation_finished" from="Fade/AnimationPlayer" to="Fade" method="_on_AnimationPlayer_animation_finished"]

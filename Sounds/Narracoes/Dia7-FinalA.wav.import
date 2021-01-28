@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia7-FinalA.wav-28b27c52120a82e93dad3ffb8c6dab9f.sample"
+
+[deps]
+
+source_file="res://Sounds/Narracoes/Dia7-FinalA.wav"
+dest_files=[ "res://.import/Dia7-FinalA.wav-28b27c52120a82e93dad3ffb8c6dab9f.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

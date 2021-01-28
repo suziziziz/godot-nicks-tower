@@ -1,0 +1,215 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://ShitScripts/MenuButtons.gd" type="Script" id=2]
+[ext_resource path="res://ShitScripts/Credits.gd" type="Script" id=3]
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Bold.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://Objects/1SetFullscreen.tscn" type="PackedScene" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 15
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="Animation" id=2]
+resource_name = "FadeIn"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("T:custom_colors/font_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 1, 1, 1, 1 )
+anti_aliasing = false
+
+[sub_resource type="DynamicFont" id=6]
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="Animation" id=7]
+resource_name = "FadeIn"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=8]
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[node name="Credits" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+return_button = NodePath("Buttons/VBoxContainer/Return")
+
+[node name="SetFullscreen" parent="." instance=ExtResource( 5 )]
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextCredits" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="T" type="Label" parent="TextCredits"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "-- EQUIPE --
+Abdias Leone(Lendario Guilmon)
+Filype Rodrigues(Filyp3)
+Gabriel Mosquetto(Não Pode Ser Revelado)
+
+-- IDEALIZAÇÃO --
+Abdias Leone
+Filype Rodrigues
+Gabriel Mosquetto
+
+-- LEVEL DESIGN --
+Filype Rodrigues
+Gabriel Mosquetto
+
+-- MODELOS --
+Abdias Leone
+
+-- PROGRAMAÇÃO --
+Filype Rodrigues
+
+-- ROTEIRO e NARRAÇÃO --
+Gabriel Mosquetto
+
+-- TRILHA SONORA e EFEITOS SONOROS --
+Gabriel Mosquetto"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Anim" type="AnimationPlayer" parent="TextCredits"]
+autoplay = "FadeIn"
+anims/FadeIn = SubResource( 2 )
+
+[node name="Buttons" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Buttons"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 576.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Return" type="Button" parent="Buttons/VBoxContainer"]
+margin_top = 5.0
+margin_right = 1024.0
+margin_bottom = 24.0
+focus_mode = 0
+custom_styles/hover = SubResource( 3 )
+custom_styles/pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "VOLTAR"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+next_scene = "res://Scenes/Menu.tscn"
+
+[node name="Fade" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="Fade"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 1, 1, 1, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Anim" type="AnimationPlayer" parent="Fade"]
+autoplay = "FadeOut"
+anims/FadeIn = SubResource( 7 )
+anims/FadeOut = SubResource( 8 )
+[connection signal="pressed" from="Buttons/VBoxContainer/Return" to="." method="_on_Return_pressed"]
+[connection signal="animation_finished" from="Fade/Anim" to="." method="_on_Anim_animation_finished"]

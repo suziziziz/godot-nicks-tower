@@ -1,0 +1,91 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Brick.png" type="Texture" id=2]
+[ext_resource path="res://Brick.png_specular.png" type="Texture" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends StaticBody
+
+export(bool) var pickable = true
+export(bool) var painted = false
+
+func set_painted():
+	painted = true
+	if painted:
+		$Mesh.visible = true
+		$Mesh2.visible = false
+	
+	pass
+"
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_texture = ExtResource( 2 )
+normal_enabled = true
+normal_scale = 2.0
+normal_texture = ExtResource( 3 )
+uv1_scale = Vector3( 0.5, 0.5, 0.5 )
+uv1_triplanar = true
+
+[sub_resource type="CubeMesh" id=3]
+material = SubResource( 2 )
+size = Vector3( 1, 0.5, 2 )
+
+[sub_resource type="SpatialMaterial" id=4]
+albedo_texture = ExtResource( 2 )
+metallic = 1.0
+normal_enabled = true
+normal_scale = 2.0
+normal_texture = ExtResource( 3 )
+uv1_scale = Vector3( 0.5, 0.5, 0.5 )
+uv1_triplanar = true
+
+[sub_resource type="CubeMesh" id=5]
+material = SubResource( 4 )
+size = Vector3( 1, 0.5, 2 )
+
+[sub_resource type="SpatialMaterial" id=6]
+flags_unshaded = true
+albedo_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="ArrayMesh" id=7]
+surfaces/0 = {
+"aabb": AABB( -0.528867, -0.278868, -1.02887, 1.05773, 0.557745, 2.05774 ),
+"array_data": PoolByteArray( 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 0, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 0, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 0, 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 0, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 0, 0, 0, 56, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 85, 57, 0, 56, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 63, 0, 0, 127, 0, 127, 0, 0, 127, 85, 53, 0, 56, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 191, 0, 0, 129, 0, 129, 0, 0, 127, 0, 60, 0, 56, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 0, 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 56, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 0, 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 56, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 63, 127, 0, 0, 0, 0, 0, 129, 127, 85, 53, 0, 56, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 191, 129, 0, 0, 0, 0, 0, 127, 127, 0, 0, 0, 60, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 191, 127, 0, 0, 0, 0, 0, 129, 127, 85, 57, 0, 56, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 63, 129, 0, 0, 0, 0, 0, 127, 127, 85, 53, 0, 60, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 56, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 56, 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 63, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 56, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 63, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 56, 220, 99, 7, 63, 185, 199, 142, 62, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 53, 0, 60, 220, 99, 7, 191, 185, 199, 142, 190, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 85, 57, 0, 60, 220, 99, 7, 191, 185, 199, 142, 62, 238, 177, 131, 191, 0, 127, 0, 0, 129, 0, 0, 127, 85, 57, 0, 60, 220, 99, 7, 63, 185, 199, 142, 190, 238, 177, 131, 191, 0, 129, 0, 0, 127, 0, 0, 127, 0, 60, 0, 60 ),
+"array_index_data": PoolByteArray( 0, 0, 4, 0, 2, 0, 2, 0, 4, 0, 6, 0, 1, 0, 5, 0, 3, 0, 3, 0, 5, 0, 7, 0, 8, 0, 12, 0, 10, 0, 10, 0, 12, 0, 14, 0, 9, 0, 13, 0, 11, 0, 11, 0, 13, 0, 15, 0, 16, 0, 20, 0, 18, 0, 18, 0, 20, 0, 22, 0, 17, 0, 21, 0, 19, 0, 19, 0, 21, 0, 23, 0 ),
+"blend_shape_data": [  ],
+"format": 97559,
+"index_count": 36,
+"material": SubResource( 6 ),
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 24
+}
+
+[sub_resource type="BoxShape" id=8]
+extents = Vector3( 1, 0.5, 2 )
+
+[node name="Brick" type="StaticBody" groups=[
+"Brick",
+]]
+collision_layer = 2
+collision_mask = 2
+script = SubResource( 1 )
+
+[node name="Mesh" type="MeshInstance" parent="."]
+visible = false
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="Mesh2" type="MeshInstance" parent="."]
+mesh = SubResource( 5 )
+material/0 = null
+
+[node name="Outine" type="MeshInstance" parent="."]
+transform = Transform( 0.98, 0, 0, 0, 0.98, 0, 0, 0, 0.98, 0, 0, 0 )
+cast_shadow = 0
+mesh = SubResource( 7 )
+material/0 = null
+
+[node name="Coll" type="CollisionShape" parent="."]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+shape = SubResource( 8 )

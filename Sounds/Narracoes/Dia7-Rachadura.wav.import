@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia7-Rachadura.wav-8ff8f06e6b62aa019d0622385c676f4b.sample"
+
+[deps]
+
+source_file="res://Sounds/Narracoes/Dia7-Rachadura.wav"
+dest_files=[ "res://.import/Dia7-Rachadura.wav-8ff8f06e6b62aa019d0622385c676f4b.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

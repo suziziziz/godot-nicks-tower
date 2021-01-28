@@ -1,0 +1,283 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Images/SliderGrabber.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://ShitScripts/SensitivityValue.gd" type="Script" id=3]
+[ext_resource path="res://Fonts/CourierPrime/CourierPrime-Bold.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://ShitScripts/ButtonReturn.gd" type="Script" id=5]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+export(NodePath) var mouse_sensi_slide
+export(NodePath) var fullscreen_switch
+
+var configs := {}
+
+func _ready():
+	var config = File.new()
+	if !config.file_exists(\"res://config.json\"):
+		return
+
+	config.open(\"res://config.json\", File.READ)
+	configs = parse_json(config.get_as_text())
+	config.close()
+
+	get_node(mouse_sensi_slide).value = configs[\"mouse_sensitivity\"]
+	get_node(fullscreen_switch).pressed = configs[\"fullscreen\"]
+"
+
+[sub_resource type="StyleBoxLine" id=2]
+content_margin_top = 0.0
+grow_begin = -1.0
+grow_end = -1.0
+thickness = 4
+
+[sub_resource type="StyleBoxLine" id=3]
+color = Color( 1, 0, 0, 1 )
+grow_begin = -1.0
+grow_end = -1.0
+thickness = 4
+
+[sub_resource type="DynamicFont" id=4]
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=5]
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=6]
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends CheckButton
+
+
+func _process(delta):
+	OS.window_fullscreen = (pressed if OS.window_fullscreen != pressed 
+		else OS.window_fullscreen)
+	
+	pass
+"
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0, 0, 0, 1 )
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 1, 1, 1, 0 )
+
+[sub_resource type="DynamicFont" id=10]
+use_filter = true
+font_data = ExtResource( 4 )
+
+[sub_resource type="Animation" id=11]
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("R:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=12]
+tracks/0/type = "value"
+tracks/0/path = NodePath("R:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 2, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[node name="Config" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+mouse_sensi_slide = NodePath("Configs/Opts/Sensitivity")
+fullscreen_switch = NodePath("Configs/Opts/Fullscreen")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Configs" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Opts" type="VBoxContainer" parent="Configs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -160.0
+margin_top = -300.0
+margin_right = 160.0
+margin_bottom = 300.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sensitivity" type="HSlider" parent="Configs/Opts"]
+margin_top = 272.0
+margin_right = 320.0
+margin_bottom = 284.0
+focus_mode = 0
+mouse_filter = 1
+custom_icons/grabber_highlight = ExtResource( 1 )
+custom_icons/grabber = ExtResource( 1 )
+custom_styles/slider = SubResource( 2 )
+custom_styles/grabber_area = SubResource( 3 )
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.01
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": true
+}
+
+[node name="Text" type="Label" parent="Configs/Opts/Sensitivity"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -65.0
+margin_top = -28.0
+margin_right = 65.0
+margin_bottom = 9.5
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Sensibilidade"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Value" type="Label" parent="Configs/Opts/Sensitivity"]
+anchor_left = 1.05
+anchor_top = 0.5
+anchor_right = 1.056
+anchor_bottom = 0.5
+margin_top = -9.5
+margin_right = 50.0
+margin_bottom = 9.5
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Value"
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+slider = NodePath("..")
+
+[node name="Fullscreen" type="CheckButton" parent="Configs/Opts"]
+margin_top = 288.0
+margin_right = 320.0
+margin_bottom = 328.0
+focus_mode = 0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "Fullscreen"
+script = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Return" type="VBoxContainer" parent="Configs"]
+anchor_top = 0.968
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 0.199951
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Return" type="Button" parent="Configs/Return"]
+margin_right = 1024.0
+margin_bottom = 19.0
+focus_mode = 0
+custom_styles/hover = SubResource( 8 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 9 )
+custom_fonts/font = SubResource( 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "SALVAR & VOLTAR"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+fade_anim = NodePath("../../../Fade/Anim")
+sensi_slider = NodePath("../../Opts/Sensitivity")
+fullscreen_check = NodePath("../../Opts/Fullscreen")
+next_scene = "res://Scenes/Menu.tscn"
+
+[node name="Fade" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="R" type="ColorRect" parent="Fade"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Anim" type="AnimationPlayer" parent="Fade"]
+autoplay = "FadeOut"
+anims/FadeIn = SubResource( 11 )
+anims/FadeOut = SubResource( 12 )
+[connection signal="animation_finished" from="Fade/Anim" to="Configs/Return/Return" method="_on_Anim_animation_finished"]

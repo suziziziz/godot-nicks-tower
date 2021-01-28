@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Dia7-Inicio.wav-1dd6b81d8ed66d58ac09cc1505edd75b.sample"
+
+[deps]
+
+source_file="res://Sounds/Narracoes/Dia7-Inicio.wav"
+dest_files=[ "res://.import/Dia7-Inicio.wav-1dd6b81d8ed66d58ac09cc1505edd75b.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

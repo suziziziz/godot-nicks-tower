@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Models/Pedra Teste/Pedra.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Objects/BrickDescolored.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends StaticBody
+
+export(int) var life := 1
+export(NodePath) var brick_spawn_pos
+export(PackedScene) var brick
+export(NodePath) var parent
+
+func _process(delta):
+	if life <= 0:
+		var _b = brick.instance()
+		get_node(parent).add_child(_b)
+		_b.set_as_toplevel(true)
+		_b.global_transform.origin = get_node(brick_spawn_pos).global_transform.origin
+		_b.rotation_degrees = Vector3.ZERO
+		queue_free()
+	
+	pass
+"
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 1.3, 2.4, 1.8 )
+
+[node name="Rocha" type="Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 6 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="BrickSpawnPos" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
+
+[node name="Rocha" type="StaticBody" parent="." groups=[
+"Rock",
+]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+life = 3
+brick_spawn_pos = NodePath("../BrickSpawnPos")
+brick = ExtResource( 2 )
+parent = NodePath("..")
+
+[node name="Pedra" type="Spatial" parent="Rocha" instance=ExtResource( 1 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.8, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Rocha"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.2, 0 )
+shape = SubResource( 2 )
